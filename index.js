@@ -1,7 +1,7 @@
 // installed programs
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const consoleTable = require('console.table');
+require('console.table');
 require('dotenv').config();
 
 // connection to database
@@ -31,9 +31,9 @@ function generateList() {
             "View all Employees",
             "View all Departments",
             "View all Roles",
-            "Add Department",
-            "Add Employee",
-            "Add Role",
+            "Add Departments",
+            "Add Employees",
+            "Add Roles",
             "Update Employee",
             "Quit"
         ]
@@ -93,3 +93,62 @@ connection.query(query3, function (err, res) {
     generateList();
     });
 }
+
+function addDepartments() {
+    inquirer.prompt({
+        type: "input",
+        name: "department",
+        message: "Enter the name of the new department",
+      })
+      .then(function (res) {
+        const addingDepartment = res.department;
+        const query = `INSERT INTO department (name) VALUES ("${addingDepartment}")`;
+        connection.query(query, function (err, res) {
+          if (err) {
+            throw err;
+          }
+          console.table(res);
+          generateList();
+        });
+    });
+}
+
+function addEmployees() {
+    inquirer.prompt([
+        { 
+            type: "input",
+            name: "firstName",
+            message: "Enter the employee's first name"
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "Enter the employee's last name"
+        },
+        {
+            type: "input",
+            name: "employeeRole",
+            message: "Enter the employee's role ID"
+        },
+        {
+            type: "input",
+            name: "employeeManager",
+            message: "Enter the employee's manager ID"
+        }
+    ])
+    .then(function (res) {
+        const firstName = res.firstName;
+        const lastName = res.lastName;
+        const employeeRoleID = res.employeeRole;
+        const employeeManagerID = res.employeeManager;
+        const query = `INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES ("${firstName}", "${lastName}", "${employeeRoleID}", "${employeeManagerID}")`;
+        connection.query(query, function (err, res) {
+          if (err) {
+            throw err;
+          }
+          console.table(res);
+          generateList();
+        });
+    });
+}
+
