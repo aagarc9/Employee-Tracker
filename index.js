@@ -34,7 +34,7 @@ function generateList() {
             "Add Departments",
             "Add Employees",
             "Add Roles",
-            "Update Employee",
+            "Update Employees",
             "Quit"
         ]
     })
@@ -58,7 +58,7 @@ function generateList() {
             case "Add Roles":
                 addRoles();
                 break;
-            case "Update Employee":
+            case "Update Employees":
                 updateEmployees();
                 break;
             case "Quit":
@@ -93,7 +93,7 @@ connection.query(query3, function (err, res) {
     generateList();
     });
 }
-
+//Add Department
 function addDepartments() {
     inquirer.prompt({
         type: "input",
@@ -112,7 +112,7 @@ function addDepartments() {
         });
     });
 }
-
+// new employees to existing database
 function addEmployees() {
     inquirer.prompt([
         { 
@@ -151,4 +151,63 @@ function addEmployees() {
         });
     });
 }
-
+//Add Employee Role
+function addRoles() {
+    inquirer.prompt([
+        {
+          type: "input",
+          name: "title",
+          message: "Enter the employee's title",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "Enter the employee's salary",
+        },
+        {
+          type: "input",
+          name: "roleDepartment",
+          message: "Enter the employee's department ID", 
+        }
+    ])
+    .then(function (res) {
+        const title = res.title;
+        const salary = res.salary;
+        const departmentID = res.roleDepartment;
+        const query = `INSERT INTO roles (title, salary, department_id) VALUES ("${title}", "${salary}", "${departmentID}")`;
+        connection.query(query, function (err, res) {
+          if (err) {
+            throw err;
+          }
+          console.table(res);
+          generateList();
+        });
+    });
+}
+//Update Employee
+function updateEmployees() {
+    inquirer.prompt([
+        {
+          type: "input",
+          name: "updateEmployee",
+          message: "Enter the employee's ID you want to be updated",
+        },
+        {
+          type: "input",
+          name: "newRole",
+          message: "Enter the role ID for that employee",
+        }
+    ])
+    .then(function (res) {
+        const updateEmployee = res.updateEmployee;
+        const newRole = res.newRole;
+        const queryUpdate = `UPDATE employee SET roles_id = "${newRole}" WHERE id = "${updateEmployee}"`;
+        connection.query(queryUpdate, function (err, res) {
+            if (err) {
+              throw err;
+            }
+            console.table(res);
+            generateList();
+        })
+    });
+}
